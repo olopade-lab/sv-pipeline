@@ -1,0 +1,22 @@
+{
+  "tumor-bam":
+  {
+    "path":"./HCC1143_ds/HCC1143.bam",
+    "class":"File"
+  },
+  "normal-bam":
+  {
+    "path":"./HCC1143_ds/HCC1143_BL.bam",
+    "class":"File"
+  },
+  "reference-fa":
+  {
+    "path": "genome.fa",
+    "class": "File"
+  },
+  "exclude":
+  {
+    "path": "hg19.excl",
+    "class": "File"
+  }
+}
