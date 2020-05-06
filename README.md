@@ -1,6 +1,5 @@
 # Implementation of the Delly Pipeline
 
-## Single Sample
 ### Steps to run the pipeline in Python:
 
 <b>Step 1:</b> Install all dependencies
@@ -18,6 +17,8 @@ bash ./get_files.sh
 
 <b>Step 3:</b> Prepare your samples.tsv file which is a tab-separated file with Sample IDs in first column and the condition (tumor/normal) in the second column. If you are using the test samples.tsv file provided in the repository, then skip this step.
 
+If you are building your own inputs.json file, make sure to specify 3 inputs in the json file for every set of samples. Example: normal-bam-2, tumor-bam-2, tsv-2. The script will find the number of samples on its own.
+
 <b>Step 4:</b> Run the python file with inputs.json as secondary file.
 
 ```python
@@ -28,7 +29,7 @@ python3 run_delly.py test_inputs.json
 
 ### Steps to run the pipeline in Docker:
 
-<b>Step 1:</b> CD into a folder that contains all the .bam files, the index files and the genome reference file. If you want to use the test inputs, you may run the following commmand to download them. The Docker image pulls the exclude templates itself so you don't need to download them even though the get_files.sh file automatically downloads it for you.
+<b>Step 1:</b> CD into a folder that contains all the .bam files, the index files and the genome reference file. If you want to use the test inputs, you may run the following commmand to download them:
 
 ```zsh
 bash ./get_files.sh

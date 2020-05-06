@@ -12,3 +12,4 @@ conda activate
 
 conda install -c bioconda delly
 brew install dos2unix samtools
+pip install parsl
