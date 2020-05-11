@@ -9,11 +9,6 @@
     "path":"./HCC1143_ds/HCC1143_BL.bam",
     "class":"File"
   },
-  "tsv-1":
-  {
-    "path":"./samples.tsv",
-    "class":"File"
-  },
   "tumor-bam-2":
   {
     "path":"./HCC1143_ds/HCC1143.bam",
@@ -24,12 +19,6 @@
     "path":"./HCC1143_ds/HCC1143_BL.bam",
     "class":"File"
   },
-  "tsv-2":
-  {
-    "path":"./samples.tsv",
-    "class":"File"
-  },
-
   "reference-fa":
   {
     "path": "genome.fa",

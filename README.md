@@ -9,20 +9,16 @@ git clone https://github.com/sohitmiglani/delly_implementation
 bash ./dependencies.sh
 ```
 
-<b>Step 2:</b> Build your own inputs.json file or run the get_files.sh script to download test files. If you make your own inputs.json file, replace the original one provided in this repository.
+<b>Step 2:</b> Build your own inputs.json file or run the get_files.sh script to download test files. If you make your own inputs.json file, replace the original one provided in this repository. Make sure to specify 2 inputs in the json file for every set of samples. Example: normal-bam-2, tumor-bam-2. The script will find the number of samples on its own and build the samples.tsv file automatically as well.
 
 ```zsh
 bash ./get_files.sh
 ```
 
-<b>Step 3:</b> Prepare your samples.tsv file which is a tab-separated file with Sample IDs in first column and the condition (tumor/normal) in the second column. If you are using the test samples.tsv file provided in the repository, then skip this step.
-
-If you are building your own inputs.json file, make sure to specify 3 inputs in the json file for every set of samples. Example: normal-bam-2, tumor-bam-2, tsv-2. The script will find the number of samples on its own.
-
-<b>Step 4:</b> Run the python file with inputs.json as secondary file.
+<b>Step 3:</b> Run the python file with inputs.json as secondary file and Parsl configuration as third file (Select the right configuration from the configs folder).
 
 ```python
-python3 run_delly.py test_inputs.json
+python3 run_delly.py test_inputs.json igsb_jupyter
 ```
 
 <hr/>
