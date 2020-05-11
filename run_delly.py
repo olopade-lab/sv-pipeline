@@ -44,6 +44,7 @@ def run_delly(tumor_bam: str, normal_bam: str , sample_num: int) -> None:
     '''
     This function takes the normal_bam and tumor_bam file strings and adds them to subprocess calls below.
     '''
+    import subprocess
     sv_discovery = 'delly call -x {} -o t1.bcf -g {} {} {}'.format(excl, ref_fa,tumor_bam, normal_bam)
     subprocess.call(sv_discovery, shell=True)
     subprocess.call('dos2unix samples.tsv', shell=True)
@@ -58,7 +59,7 @@ def make_tsv(tumor_bam:str, normal_bam: str, sample_num: int) -> None:
     This function takes the normal_bam and tumor_bam file strings and makes the .tsv file for that sample.
     '''
     tumor = tumor_bam.split('.bam')[0]
-    control - normal_bam.split('.bam')[0]
+    control = normal_bam.split('.bam')[0]
     import csv
     out_file = open('sample{}.tsv'.format(sample_num), 'wt')
     tsv_writer = csv.writer(out_file, delimiter='\t')
