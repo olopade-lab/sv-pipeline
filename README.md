@@ -1,4 +1,4 @@
-# Implementation of the Delly Pipeline
+# Implementation of Somatic Variant-Calling Pipelines in Parallel
 
 ### Steps to run the pipeline in Python:
 
@@ -9,16 +9,24 @@ git clone https://github.com/sohitmiglani/delly_implementation
 bash ./dependencies.sh
 ```
 
+Note: If you are using Lumpy, don't forget to export the path of the bin with the real as shown below:
+
+```zsh
+export PATH=$PATH:~/lumpy-sv/bin
+```
+
 <b>Step 2:</b> Build your own inputs.json file or run the get_files.sh script to download test files. If you make your own inputs.json file, replace the original one provided in this repository. Make sure to specify 2 inputs in the json file for every set of samples. Example: normal-bam-2, tumor-bam-2. The script will find the number of samples on its own and build the samples.tsv file automatically as well.
 
 ```zsh
 bash ./get_files.sh
 ```
 
-<b>Step 3:</b> Run the python file with inputs.json as secondary file and Parsl configuration as third file (Select the right configuration from the configs folder).
+<b>Step 3:</b> Run the python file with inputs.json as secondary file, Parsl configuration as third file (Select the right configuration from the configs folder) and type of caller as the third parameter.
+
+Type of callers current available in this script: delly, lumpy
 
 ```python
-python3 run_delly.py test_inputs.json igsb_jupyter
+python3 run_delly.py test_inputs.json igsb_jupyter delly
 ```
 
 <hr/>
