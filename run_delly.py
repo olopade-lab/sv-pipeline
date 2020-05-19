@@ -16,6 +16,7 @@ import logging
 import argparse
 logging.basicConfig(level=logging.INFO)
 import parsl
+from parsl import python_app, bash_app
 
 ''' Processing the Inputs Json file and extracting the reference genome and excl file '''
 
@@ -31,36 +32,47 @@ module = importlib.util.module_from_spec(spec)
 spec.loader.exec_module(module)
 parsl.load(module.config)
 
-inputs = json.load(open(args.input_json))
+try:
+    inputs = json.load(open(args.input_json))
+except:
+    raise FileNotFoundError('The Input Json file was either not found or it is corrupted.')
+
 logging.info('Initialised Parsl and inputs.json file')
 
 ref_fa = inputs['reference-fa']['path'] # type: str
 excl = inputs['exclude']['path'] # type: str
 
+if not os.path.exists(ref_fa):
+    raise FileNotFoundError('The Reference file was not found. Please denote the correct directory for the reference file.')
+
+if not os.path.exists(excl):
+    raise FileNotFoundError('The exclusion (excl) file was not found. Please denote the correct directory for the excl file.')
+
 logging.info('Reference file and excl file loaded.')
 
-@python_app
-def run_delly(tumor_bam: str, normal_bam: str , sample_num: int) -> None:
+@bash_app
+def run_delly(tumor_bam: str, normal_bam: str , sample_num: int):
     '''
     This function takes the normal_bam and tumor_bam file strings and adds them to subprocess calls below.
     '''
-    import subprocess
-    sv_discovery = 'delly call -x {} -o t1.bcf -g {} {} {}'.format(excl, ref_fa,tumor_bam, normal_bam)
-    subprocess.call(sv_discovery, shell=True)
-    subprocess.call('dos2unix samples.tsv', shell=True)
-    subprocess.call('delly filter -f somatic -o t1.pre.bcf -s samples.tsv t1.bcf', shell=True)
-    pre_filter_call =  'delly call -g {} -v t1.pre.bcf -o geno.bcf -x {} {} {}'.format(ref_fa, excl,tumor_bam, normal_bam)
-    subprocess.call(pre_filter_call, shell=True)
-    subprocess.call('delly filter -f somatic -o t1.somatic.bcf -s sample{}.tsv geno.bcf'.format(sample_num), shell=True)
+    sv_discovery = 'delly call -x {} -o t{}.bcf -g {} {} {}'.format(excl, sample_num, ref_fa,tumor_bam, normal_bam)
+    conversion = 'dos2unix samples.tsv'
+    filter = 'delly filter -f somatic -o t{}.pre.bcf -s samples.tsv t{}.bcf'.format(sample_num, sample_num)
+    pre_filter_call =  'delly call -g {} -v t{}.pre.bcf -o geno{}.bcf -x {} {} {}'.format(ref_fa, sample_num,
+                                                                                          sample_num, excl,
+                                                                                          tumor_bam, normal_bam)
+    final_filter = 'delly filter -f somatic -o t{}.somatic.bcf -s sample{}.tsv geno{}.bcf'.format(sample_num, sample_num, sample_num)
+    return '{} ; {} ; {} ; {} ; {}'.format(sv_discovery, conversion, filter, pre_filter_call, final_filter)
 
 @python_app
 def make_tsv(tumor_bam:str, normal_bam: str, sample_num: int) -> None:
     '''
     This function takes the normal_bam and tumor_bam file strings and makes the .tsv file for that sample.
     '''
-    tumor = tumor_bam.split('.bam')[0]
-    control = normal_bam.split('.bam')[0]
     import csv
+
+    tumor = tumor_bam.split('.bam')[0]
+    control - normal_bam.split('.bam')[0]
     out_file = open('sample{}.tsv'.format(sample_num), 'wt')
     tsv_writer = csv.writer(out_file, delimiter='\t')
     tsv_writer.writerow([tumor, 'tumor'])
@@ -73,14 +85,20 @@ results = [] # type: list
 
 logging.info('{} Samples detected'.format(num_samples))
 
+if num_samples < 1:
+    raise ValueError('The Json file doesnt have any data for a given sample. It only has the reference file and excl file. \
+                      Please add the normal bam and tumor bam file for each sample in the inputs json file.')
+
 for i in range(1,num_samples+1):
     tumor_bam = inputs['tumor-bam-{}'.format(i)]['path']
     normal_bam = inputs['normal-bam-{}'.format(i)]['path']
+
+    if not os.path.exists(tumor_bam) or not os.path.exists(normal_bam):
+        raise FileNotFoundError('The Tumor bam or the Normal bam file couldnt be found. Please specify the right directory.')
 
     samples.append(make_tsv(tumor_bam, normal_bam, sample_num))
     results.append(run_delly(tumor_bam, normal_bam, sample_num))
     logging.info('Compiling DELLY for Sample Number {}'.format(i))
 
 logging.info('Executing DELLY using Parsl')
-samples = [i.result() for i in samples]
-results = [i.result() for i in results]
+parsl.wait_for_current_tasks()
