@@ -5,7 +5,7 @@
 <b>Step 1:</b> Install all dependencies
 
 ```zsh
-git clone https://github.com/sohitmiglani/delly_implementation
+git clone https://github.com/olopade-lab/sv-pipeline
 bash ./dependencies.sh
 ```
 
@@ -26,7 +26,7 @@ bash ./get_files.sh
 Type of callers current available in this script: delly, lumpy
 
 ```python
-python3 run_delly.py test_inputs.json igsb_jupyter delly
+python3 run_caller.py test_inputs.json igsb_jupyter delly
 ```
 
 <hr/>
