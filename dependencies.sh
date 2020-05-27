@@ -11,5 +11,13 @@ conda activate
 # Installing Delly: https://anaconda.org/bioconda/delly
 
 conda install -c bioconda delly
-brew install dos2unix samtools
+brew install dos2unix samtools bcftools
 pip install parsl
+
+# Installing Survivor
+
+wget https://github.com/fritzsedlazeck/SURVIVOR/archive/master.tar.gz -O SURVIVOR.tar.gz
+tar xzvf SURVIVOR.tar.gz
+cd SURVIVOR-master/Debug/
+make
+./SURVIVOR
